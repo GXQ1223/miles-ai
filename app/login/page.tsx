@@ -3,6 +3,14 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
+function sanitizeRedirectTarget(target: string | null): string {
+  if (!target) return "/studio";
+  if (!target.startsWith("/") || target.startsWith("//") || target.startsWith("/\\")) {
+    return "/studio";
+  }
+  return target;
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -27,7 +35,7 @@ export default function LoginPage() {
       return;
     }
 
-    const from = new URLSearchParams(window.location.search).get("from") ?? "/studio";
+    const from = sanitizeRedirectTarget(new URLSearchParams(window.location.search).get("from"));
     router.push(from);
     router.refresh();
   }

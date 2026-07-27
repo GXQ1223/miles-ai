@@ -1,6 +1,13 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { getAuthConfig } from "@/lib/auth/config";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from "@/lib/auth/session";
+
+function timingSafeStringEqual(a: string, b: string): boolean {
+  const hashA = createHash("sha256").update(a).digest();
+  const hashB = createHash("sha256").update(b).digest();
+  return timingSafeEqual(hashA, hashB);
+}
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as { username?: string; password?: string } | null;
@@ -10,7 +17,7 @@ export async function POST(request: Request) {
 
   const config = getAuthConfig();
   const passwordValid = await verifyPassword(body.password, config.passwordHash);
-  const usernameValid = body.username === config.username;
+  const usernameValid = timingSafeStringEqual(body.username, config.username);
 
   if (!usernameValid || !passwordValid) {
     return Response.json({ error: "invalid credentials" }, { status: 401 });
