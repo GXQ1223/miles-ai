@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+.env.local
+data/uploads/*
+!data/uploads/.gitkeep
+data/catalog.json
+.DS_Store
+*.tsbuildinfo
