@@ -1,7 +1,23 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { featuredSystems } from "@/lib/content/sample";
+import { ImageCard } from "@/components/image-card";
+import type { ImageKey } from "@/lib/content/images";
 
 type Props = { params: Promise<{ slug: string }> };
+
+const heroImageKeys: Record<string, ImageKey> = {
+  "safe-ai-actions": "workSafeAiActions",
+  "hostile-integrations": "workHostileIntegrations",
+  "multi-tenant-ai": "workMultiTenantAi",
+};
+
+// Verbatim excerpts pulled from each case study's own "hard decision" copy in sample.ts.
+const pullQuotes: Record<string, string> = {
+  "safe-ai-actions": "Trading full automation for a system people would actually trust with real orders.",
+  "hostile-integrations": "The difference between a tool ops teams can rely on and one that quietly returns a wrong number.",
+  "multi-tenant-ai": "No credential ever had to live in the browser.",
+};
 
 export function generateStaticParams() {
   return featuredSystems.map((system) => ({ slug: system.slug }));
@@ -9,25 +25,96 @@ export function generateStaticParams() {
 
 export default async function WorkDetailPage({ params }: Props) {
   const { slug } = await params;
-  const system = featuredSystems.find((item) => item.slug === slug);
-  if (!system) notFound();
-
+  const index = featuredSystems.findIndex((item) => item.slug === slug);
+  if (index === -1) notFound();
+  const system = featuredSystems[index];
   const { sections } = system;
 
   return (
-    <div className="page">
-      <span className="eyebrow">CASE STUDY</span>
-      <h1>{system.title}</h1>
-      <p className="lede">{system.summary}</p>
-      <section className="section grid">
-        <article className="card wide"><small>01</small><h2>The messy reality</h2><p>{sections.reality}</p></article>
-        <article className="card"><small>02</small><h2>My role</h2><p>{sections.role}</p></article>
-        <article className="card full"><small>03</small><h2>System map</h2><p>{sections.systemMap}</p></article>
-        <article className="card"><small>04</small><h2>Hard decision</h2><p>{sections.hardDecision}</p></article>
-        <article className="card"><small>05</small><h2>Failure modes</h2><p>{sections.failureModes}</p></article>
-        <article className="card"><small>06</small><h2>Outcome</h2><p>{sections.outcome}</p></article>
-        <article className="card full"><small>07</small><h2>At 100× scale</h2><p>{sections.atScale}</p></article>
-      </section>
+    <div>
+      <div className="headCentered">
+        <Link className="back" href="/work">← All work</Link>
+        <span className="eyebrow">Case study · 0{index + 1}</span>
+        <h1>{system.title}</h1>
+        <p className="lede">{system.summary}</p>
+        <div className="meta">
+          {system.stack.map((tool) => (
+            <span className="pill" key={tool}>{tool}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="heroimg-wrap">
+        <ImageCard imageKey={heroImageKeys[slug]} width={1800} height={1100} className="heroimg" />
+      </div>
+
+      <div className="block">
+        <div className="col">
+          <span className="label">The reality</span>
+          <p>{sections.reality}</p>
+        </div>
+      </div>
+
+      <div className="block">
+        <div className="col">
+          <span className="label">My role</span>
+          <p>{sections.role}</p>
+        </div>
+      </div>
+
+      <div className="block">
+        <div className="col">
+          <span className="label">How it works</span>
+          <p>{sections.systemMap}</p>
+        </div>
+      </div>
+
+      <div className="quote">
+        <p>&ldquo;{pullQuotes[slug]}&rdquo;</p>
+      </div>
+
+      <div className="block">
+        <div className="col">
+          <span className="label">The hard decision</span>
+          <p>{sections.hardDecision}</p>
+        </div>
+      </div>
+
+      <div className="midimg-wrap">
+        <ImageCard imageKey="workBreak" width={1800} height={1000} className="midimg" />
+      </div>
+
+      <div className="three-up">
+        <div>
+          <span className="label">Failure modes</span>
+          <p>{sections.failureModes}</p>
+        </div>
+        <div>
+          <span className="label">Outcome</span>
+          <p>{sections.outcome}</p>
+        </div>
+        <div>
+          <span className="label">At scale</span>
+          <p>{sections.atScale}</p>
+        </div>
+      </div>
+
+      <div className="cross">
+        <span className="eyebrow">Continue reading</span>
+        <h2>Nearby in the archive</h2>
+        <div className="cross-grid">
+          <Link href="/garden">
+            <ImageCard imageKey="garden" width={800} height={600} />
+            <span className="eyebrow">Garden idea</span>
+            <h4>Consistency becomes visible late.</h4>
+          </Link>
+          <Link href="/timeline">
+            <ImageCard imageKey="timeline" width={800} height={600} />
+            <span className="eyebrow">Timeline</span>
+            <h4>Forward-deployed AI, 2025.</h4>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

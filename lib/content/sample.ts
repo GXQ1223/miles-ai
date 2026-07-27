@@ -4,6 +4,7 @@ export const featuredSystems = [
     title: "Making AI safe enough to act",
     summary:
       "Guardrails, validation, and human escalation for LLM agents that take real actions in production logistics operations.",
+    stack: ["Zendesk", "Salesforce", "Deposco", "Snowflake"],
     sections: {
       reality:
         "Customer support and fulfillment teams needed an AI agent that could actually resolve tickets — not just draft a reply for a human to check. But the underlying systems (Zendesk, Salesforce, Deposco, Snowflake) were never built for a non-deterministic caller, and a wrong action costs real money and customer trust.",
@@ -26,6 +27,7 @@ export const featuredSystems = [
     title: "Building through systems I do not control",
     summary:
       "A natural-language interface over fragmented operational data, so non-technical ops teams can ask questions without filing an engineering ticket.",
+    stack: ["Zendesk", "Salesforce", "Deposco", "Snowflake"],
     sections: {
       reality:
         "Operational data lived scattered across Zendesk, Salesforce, Deposco, and Snowflake, with no single source of truth. Ops teams needed answers in minutes, but every question meant waiting on an engineer to write a query.",
@@ -48,6 +50,7 @@ export const featuredSystems = [
     title: "One platform, many customer realities",
     summary:
       "An internal agent-management platform where authentication, feature visibility, and workflows all have to flex per customer without forking the codebase.",
+    stack: ["AWS Cognito", "Amplify", "Next.js"],
     sections: {
       reality:
         "One platform served many customers, each with different workflows, integrations, and access rules. A single shared codebase had to feel purpose-built to every one of them without becoming a maze of one-off conditionals.",

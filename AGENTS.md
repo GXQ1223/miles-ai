@@ -9,6 +9,15 @@ Before editing:
 4. Never expose raw storage keys, provider API keys, or private asset metadata.
 5. A public page must read from publication records, not directly from vault assets.
 6. AI output is always a derivative with provenance; it never overwrites source material.
+7. The public site (everything outside `app/studio/`) follows the "Quiet Grid" visual
+   system: white/near-black/violet, Inter, rounded-corner soft-shadowed image cards,
+   no full-bleed photos. `app/globals.css` and `app/layout.tsx` are shared with
+   `/studio` (nested inside the same root layout) — treat shared class names as
+   additive; don't repurpose `.page`/`.section`/`.card`/`.grid`/`.studioNav`/`.studioShell`
+   in ways that would break Studio's structure.
+8. Placeholder photography (Picsum, no real photos yet) is centralized in
+   `lib/content/images.ts` — reference images via its `imageUrl(key, w, h)`, never
+   inline a picsum URL in a component, so swapping in real photos later is a one-file change.
 
 ## Studio authentication
 
