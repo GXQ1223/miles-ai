@@ -5,10 +5,16 @@ import { useRouter } from "next/navigation";
 
 function sanitizeRedirectTarget(target: string | null): string {
   if (!target) return "/studio";
-  if (!target.startsWith("/") || target.startsWith("//") || target.startsWith("/\\")) {
+  let resolved: URL;
+  try {
+    resolved = new URL(target, window.location.origin);
+  } catch {
     return "/studio";
   }
-  return target;
+  if (resolved.origin !== window.location.origin) {
+    return "/studio";
+  }
+  return `${resolved.pathname}${resolved.search}${resolved.hash}`;
 }
 
 export default function LoginPage() {
