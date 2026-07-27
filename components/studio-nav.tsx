@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StudioLogoutButton } from "./studio-logout-button";
 
 const links = [
   ["Dashboard", "/studio"],
@@ -16,6 +17,7 @@ export function StudioNav() {
     <aside className="studioNav">
       <strong>Private Studio</strong>
       {links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+      <StudioLogoutButton />
     </aside>
   );
 }
