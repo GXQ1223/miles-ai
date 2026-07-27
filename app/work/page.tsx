@@ -43,7 +43,7 @@ export default function WorkPage() {
           {otherProjects.map((item) => {
             const content = (
               <>
-                <small>{item.year} · {item.role}</small>
+                <small>{`${item.year} · ${item.role}`.toUpperCase()}</small>
                 <div>
                   <h2>{item.title}</h2>
                   <p>{item.summary}</p>
