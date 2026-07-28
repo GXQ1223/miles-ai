@@ -47,6 +47,17 @@ export async function createSessionToken(username: string, secret: string): Prom
   return `${payloadB64}.${base64UrlEncode(signature)}`;
 }
 
+export function buildSessionCookieHeader(token: string): string {
+  return [
+    `${SESSION_COOKIE_NAME}=${token}`,
+    "Path=/",
+    `Max-Age=${SESSION_MAX_AGE_SECONDS}`,
+    "HttpOnly",
+    "SameSite=Lax",
+    ...(process.env.NODE_ENV === "production" ? ["Secure"] : [])
+  ].join("; ");
+}
+
 export async function verifySessionToken(token: string, secret: string): Promise<SessionPayload | null> {
   const [payloadB64, signatureB64] = token.split(".");
   if (!payloadB64 || !signatureB64) return null;

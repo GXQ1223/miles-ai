@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 function sanitizeRedirectTarget(target: string | null): string {
   if (!target) return "/studio";
@@ -19,70 +20,55 @@ function sanitizeRedirectTarget(target: string | null): string {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  async function onSubmit(event: FormEvent) {
+  async function onSignIn(event: MouseEvent) {
     event.preventDefault();
     setSubmitting(true);
     setError(null);
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
+    try {
+      const optionsRes = await fetch("/api/auth/login/options", { method: "POST" });
+      if (!optionsRes.ok) {
+        const body = await optionsRes.json().catch(() => null);
+        throw new Error(body?.error ?? "No passkey is registered for this site yet.");
+      }
+      const optionsJSON = await optionsRes.json();
 
-    setSubmitting(false);
-    if (!res.ok) {
-      setError("Invalid username or password.");
-      return;
+      const assertion = await startAuthentication({ optionsJSON });
+
+      const verifyRes = await fetch("/api/auth/login/verify", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ response: assertion })
+      });
+      if (!verifyRes.ok) {
+        throw new Error("Passkey sign-in failed.");
+      }
+
+      const from = sanitizeRedirectTarget(new URLSearchParams(window.location.search).get("from"));
+      router.push(from);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Passkey sign-in failed.");
+    } finally {
+      setSubmitting(false);
     }
-
-    const from = sanitizeRedirectTarget(new URLSearchParams(window.location.search).get("from"));
-    router.push(from);
-    router.refresh();
   }
 
   return (
     <div className="page">
       <h1>Studio sign in</h1>
-      <p className="lede">Private archive. Owner access only.</p>
-      <form onSubmit={onSubmit} style={{ maxWidth: 360 }}>
-        <div className="field">
-          <label htmlFor="username">Username</label>
-          <input
-            id="username"
-            name="username"
-            autoComplete="username"
-            required
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </div>
-        {error && (
-          <p role="alert" style={{ color: "#b3261e" }}>
-            {error}
-          </p>
-        )}
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+      <p className="lede">Private archive. Owner access only — sign in with your passkey.</p>
+      {error && (
+        <p role="alert" style={{ color: "#b3261e" }}>
+          {error}
+        </p>
+      )}
+      <button type="button" onClick={onSignIn} disabled={submitting} style={{ marginTop: 24 }}>
+        {submitting ? "Waiting for passkey…" : "Sign in with passkey"}
+      </button>
     </div>
   );
 }
