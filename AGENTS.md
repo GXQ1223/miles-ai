@@ -24,9 +24,12 @@ Before editing:
 `/studio/**` pages and their backing API routes (`/api/compose`,
 `/api/uploads/local`, `/api/assets/upload-target`) are gated by `proxy.ts`
 (Next 16's replacement for `middleware.ts`), backed by `lib/auth/`. Single
-owner, no user table — see `.env.example` for the three required
-`AUTH_*` env vars and `README.md` for what this does and does not cover
-per `docs/PRIVACY.md`.
+owner, no user table, no username/password — passwordless WebAuthn passkey
+only (`lib/auth/passkey.ts`, one-time registration at `/setup`). See
+`.env.example` for the required `AUTH_*` env vars (including the RP ID/origin
+binding a passkey is registered against) and `README.md`'s "Registering the
+passkey" section for the registration flow, the domain-binding gotcha, and
+what this does and does not cover per `docs/PRIVACY.md`.
 
 ## Known pre-existing issue
 
