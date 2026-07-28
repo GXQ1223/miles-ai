@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { featuredSystems, otherProjects } from "@/lib/content/sample";
 import { ImageCard } from "@/components/image-card";
-
-const workImageKeys = ["workSafeAiActions", "workHostileIntegrations", "workMultiTenantAi"] as const;
+import { workImageKeyBySlug } from "@/lib/content/images";
 
 export default function WorkPage() {
   return (
@@ -23,7 +22,7 @@ export default function WorkPage() {
             className={`work-row${index % 2 ? " rev" : ""}`}
             key={item.slug}
           >
-            <ImageCard imageKey={workImageKeys[index]} width={1200} height={900} />
+            <ImageCard imageKey={workImageKeyBySlug[item.slug]} width={1200} height={900} />
             <div className="worktxt">
               <span className="num">CASE STUDY 0{index + 1}</span>
               <h3>{item.title}</h3>

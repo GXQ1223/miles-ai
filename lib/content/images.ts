@@ -31,3 +31,11 @@ export type ImageKey = keyof typeof SEEDS;
 export function imageUrl(key: ImageKey, width: number, height: number): string {
   return `https://picsum.photos/seed/${SEEDS[key]}/${width}/${height}`;
 }
+
+// Single source of truth for which case study (by slug) uses which hero/thumbnail image,
+// so app/page.tsx, app/work/page.tsx, and app/work/[slug]/page.tsx can't drift apart.
+export const workImageKeyBySlug: Record<string, ImageKey> = {
+  "safe-ai-actions": "workSafeAiActions",
+  "hostile-integrations": "workHostileIntegrations",
+  "multi-tenant-ai": "workMultiTenantAi",
+};

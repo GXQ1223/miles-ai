@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { currentChapter, featuredSystems } from "@/lib/content/sample";
 import { ImageCard } from "@/components/image-card";
+import { workImageKeyBySlug } from "@/lib/content/images";
 
 export default function HomePage() {
   return (
@@ -49,7 +50,7 @@ export default function HomePage() {
             key={item.slug}
           >
             <ImageCard
-              imageKey={index === 0 ? "workSafeAiActions" : index === 1 ? "workHostileIntegrations" : "workMultiTenantAi"}
+              imageKey={workImageKeyBySlug[item.slug]}
               width={1200}
               height={900}
             />

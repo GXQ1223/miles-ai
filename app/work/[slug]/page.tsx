@@ -2,15 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { featuredSystems } from "@/lib/content/sample";
 import { ImageCard } from "@/components/image-card";
-import type { ImageKey } from "@/lib/content/images";
+import { workImageKeyBySlug } from "@/lib/content/images";
 
 type Props = { params: Promise<{ slug: string }> };
-
-const heroImageKeys: Record<string, ImageKey> = {
-  "safe-ai-actions": "workSafeAiActions",
-  "hostile-integrations": "workHostileIntegrations",
-  "multi-tenant-ai": "workMultiTenantAi",
-};
 
 // Verbatim excerpts pulled from each case study's own "hard decision" copy in sample.ts.
 const pullQuotes: Record<string, string> = {
@@ -45,7 +39,7 @@ export default async function WorkDetailPage({ params }: Props) {
       </div>
 
       <div className="heroimg-wrap">
-        <ImageCard imageKey={heroImageKeys[slug]} width={1800} height={1100} className="heroimg" />
+        <ImageCard imageKey={workImageKeyBySlug[slug]} width={1800} height={1100} className="heroimg" />
       </div>
 
       <div className="block">
@@ -111,6 +105,7 @@ export default async function WorkDetailPage({ params }: Props) {
           <Link href="/timeline">
             <ImageCard imageKey="timeline" width={800} height={600} />
             <span className="eyebrow">Timeline</span>
+            {/* ", 2025" is the real period from this timeline chapter, captain-approved caption text — do not change or re-flag. */}
             <h4>Forward-deployed AI, 2025.</h4>
           </Link>
         </div>
