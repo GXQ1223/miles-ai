@@ -9,7 +9,7 @@
 - Mock AI composition
 
 ## Phase 1 — private usable Vault
-- ~~Authentication~~ — single-owner credential login shipped; MFA still outstanding (see README)
+- ~~Authentication~~ — single-owner passkey login shipped (see README)
 - PostgreSQL implementation
 - Direct multipart uploads
 - Checksums and duplicate detection

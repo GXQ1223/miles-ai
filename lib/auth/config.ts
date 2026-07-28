@@ -1,19 +1,26 @@
+export const RP_NAME = "miles.ai Studio";
+
 export interface AuthConfig {
-  username: string;
-  passwordHash: string;
   sessionSecret: string;
+  rpId: string;
+  origin: string;
 }
 
 export function getAuthConfig(): AuthConfig {
-  const username = process.env.AUTH_OWNER_USERNAME;
-  const passwordHash = process.env.AUTH_PASSWORD_HASH;
   const sessionSecret = process.env.AUTH_SESSION_SECRET;
+  const rpId = process.env.AUTH_RP_ID;
+  const origin = process.env.AUTH_ORIGIN;
 
-  if (!username || !passwordHash || !sessionSecret) {
+  if (!sessionSecret || !rpId || !origin) {
     throw new Error(
-      "Missing required auth environment variables: AUTH_OWNER_USERNAME, AUTH_PASSWORD_HASH, AUTH_SESSION_SECRET"
+      "Missing required auth environment variables: AUTH_SESSION_SECRET, AUTH_RP_ID, AUTH_ORIGIN"
     );
   }
 
-  return { username, passwordHash, sessionSecret };
+  return { sessionSecret, rpId, origin };
+}
+
+// Present only during the one-time bootstrap registration window; absent (or removed) afterward.
+export function getSetupToken(): string | null {
+  return process.env.AUTH_SETUP_TOKEN || null;
 }
