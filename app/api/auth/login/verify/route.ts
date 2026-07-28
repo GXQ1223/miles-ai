@@ -40,6 +40,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "authentication not verified" }, { status: 401 });
   }
 
+  // verification.authenticationInfo.newCounter is intentionally not persisted: the
+  // credential lives in an env var with no runtime write path, and phone/platform
+  // passkeys (synced via iCloud/Google) universally report counter 0, so there's
+  // nothing meaningful to track here anyway.
+
   const token = await createSessionToken(OWNER_SUBJECT, sessionSecret);
   const response = NextResponse.json({ ok: true });
   clearChallengeCookie(response);
