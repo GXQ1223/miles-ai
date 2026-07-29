@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useState, type CSSProperties } from "react";
 import Link from "next/link";
 
 type CaseStudyEvent = {
@@ -45,6 +45,27 @@ function xPct(year: number) {
   return ((year - YEAR_MIN) / (YEAR_MAX - YEAR_MIN)) * 100;
 }
 
+// Positioned along the axis via a `--pos` custom property rather than an inline `left`/`top`
+// so the CSS alone can redirect it to either axis depending on viewport width — the same
+// number drives a horizontal position on wide screens and a vertical one on narrow screens.
+function posStyle(pct: number): CSSProperties {
+  return { "--pos": `${pct}%` } as CSSProperties;
+}
+
+// Chapters need two different coordinates, not one reused: on the horizontal (desktop) axis,
+// a card's position must be true to its real year range — that's the whole "position on
+// screen means position in time" identity of this design. But two chapters can have adjacent
+// or overlapping year ranges (Computer science and Forward-deployed AI both sit in 2025), so
+// stacked in a single mobile column that same year-proportional spacing collides. On the
+// vertical axis we space chapters evenly by index instead, same as moments already are.
+function evenPct(index: number, count: number) {
+  return count === 1 ? 50 : (index / (count - 1)) * 84 + 8;
+}
+
+function nodeStyle(pctX: number, pctY: number): CSSProperties {
+  return { "--pos-x": `${pctX}%`, "--pos-y": `${pctY}%` } as CSSProperties;
+}
+
 const YEARS = [2021, 2022, 2023, 2024, 2025, 2026];
 
 export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
@@ -77,20 +98,31 @@ export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
 
   return (
     <div className="tl-wrap">
-      <nav className="tl-crumbs">
-        {crumbs.map((c, i) => (
-          <Fragment key={c.label}>
-            {i > 0 && <span className="tl-sep">/</span>}
-            <button
-              type="button"
-              className={`tl-crumb${i === crumbs.length - 1 ? " current" : ""}`}
-              onClick={c.onClick}
-            >
-              {c.label}
-            </button>
-          </Fragment>
-        ))}
-      </nav>
+      <div className="tl-controlbar">
+        <nav className="tl-crumbs">
+          {crumbs.map((c, i) => (
+            <Fragment key={c.label}>
+              {i > 0 && <span className="tl-sep">/</span>}
+              <button
+                type="button"
+                className={`tl-crumb${i === crumbs.length - 1 ? " current" : ""}`}
+                onClick={c.onClick}
+              >
+                {c.label}
+              </button>
+            </Fragment>
+          ))}
+        </nav>
+        {level > 0 && (
+          <button
+            type="button"
+            className="tl-zoom-out"
+            onClick={() => goTo((level - 1) as 0 | 1)}
+          >
+            ← Zoom out to {level === 1 ? "timeline" : chapter?.title}
+          </button>
+        )}
+      </div>
 
       <div className="tl-stage" data-level={level}>
         <div className="tl-level tl-level-0">
@@ -98,17 +130,18 @@ export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
             <div className="tl-axis-line" />
             <div className="tl-year-ticks">
               {YEARS.map((y) => (
-                <span className="tl-year-tick" style={{ left: xPct(y) + "%" }} key={y}>
+                <span className="tl-year-tick" style={posStyle(xPct(y))} key={y}>
                   {y === 2026 ? "2026 — now" : y}
                 </span>
               ))}
             </div>
             <div className="tl-chapters-track">
               {chapters.map((ch, i) => {
-                const pct = xPct((ch.yearStart + ch.yearEnd) / 2);
+                const pctX = xPct((ch.yearStart + ch.yearEnd) / 2);
+                const pctY = evenPct(i, chapters.length);
                 const above = i % 2 === 0;
                 return (
-                  <div className="tl-chapter-node" style={{ left: pct + "%" }} key={ch.id}>
+                  <div className="tl-chapter-node" style={nodeStyle(pctX, pctY)} key={ch.id}>
                     <div className="tl-chapter-dot" />
                     <button
                       type="button"
@@ -131,9 +164,6 @@ export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
         <div className="tl-level tl-level-1">
           {chapter && (
             <div className="tl-chapter-view">
-              <button type="button" className="tl-back-fab" onClick={() => goTo(0)}>
-                ← Zoom out to timeline
-              </button>
               <div className="tl-chapter-view-head">
                 <span className="tl-period">{chapter.period} · {chapter.org}</span>
                 <h2>{chapter.title}</h2>
@@ -143,9 +173,9 @@ export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
                 <div className="tl-sub-axis-line" />
                 <div className="tl-sub-events-track">
                   {chapter.events.map((ev, i, arr) => {
-                    const pct = arr.length === 1 ? 50 : (i / (arr.length - 1)) * 84 + 8;
+                    const pct = evenPct(i, arr.length);
                     return (
-                      <div className="tl-event-node" style={{ left: pct + "%" }} key={ev.id}>
+                      <div className="tl-event-node" style={nodeStyle(pct, pct)} key={ev.id}>
                         <div className="tl-event-dot" />
                         <button type="button" className="tl-event-card" onClick={() => openEvent(ev.id)}>
                           <span className="tl-connector" />
@@ -166,9 +196,6 @@ export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
         <div className="tl-level tl-level-2">
           {chapter && event && (
             <div className="tl-event-detail">
-              <button type="button" className="tl-back-fab" onClick={() => goTo(1)}>
-                ← Zoom out to {chapter.title}
-              </button>
               <div className="tl-event-detail-head">
                 <span className="tl-eb">{event.period} · {chapter.title}</span>
                 <h2>{event.title}</h2>
