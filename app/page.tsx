@@ -15,7 +15,6 @@ export default function HomePage() {
         </p>
         <div className="cta">
           <Link className="primary" href="/work">See the work</Link>
-          <Link className="secondary" href="/now">Read /now</Link>
         </div>
       </section>
 
@@ -66,29 +65,19 @@ export default function HomePage() {
 
       <div className="block-section">
         <div className="section-head">
-          <span className="eyebrow">Elsewhere in the archive</span>
+          <span className="eyebrow">Elsewhere on the site</span>
           <h2>Everything else, all connected.</h2>
         </div>
         <div className="gallery">
-          <Link href="/garden">
-            <ImageCard imageKey="garden" width={700} height={700} />
-            <span className="eyebrow">Garden</span>
-            <h4>Ideas grow through revision and connection.</h4>
-          </Link>
-          <Link href="/miles">
-            <ImageCard imageKey="miles" width={700} height={700} />
-            <span className="eyebrow">Miles</span>
-            <h4>Running as a record of time.</h4>
-          </Link>
           <Link href="/timeline">
             <ImageCard imageKey="timeline" width={700} height={700} />
             <span className="eyebrow">Timeline</span>
             <h4>Architecture → software → AI systems.</h4>
           </Link>
-          <Link href="/archive/2026">
-            <ImageCard imageKey="archive" width={700} height={700} />
-            <span className="eyebrow">Archive</span>
-            <h4>Enter through a year.</h4>
+          <Link href="/about">
+            <ImageCard imageKey="about" width={700} height={700} />
+            <span className="eyebrow">About</span>
+            <h4>Architect turned AI engineer.</h4>
           </Link>
         </div>
       </div>

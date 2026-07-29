@@ -95,18 +95,17 @@ export default async function WorkDetailPage({ params }: Props) {
 
       <div className="cross">
         <span className="eyebrow">Continue reading</span>
-        <h2>Nearby in the archive</h2>
+        <h2>More from the site</h2>
         <div className="cross-grid">
-          <Link href="/garden">
-            <ImageCard imageKey="garden" width={800} height={600} />
-            <span className="eyebrow">Garden idea</span>
-            <h4>Consistency becomes visible late.</h4>
-          </Link>
           <Link href="/timeline">
             <ImageCard imageKey="timeline" width={800} height={600} />
             <span className="eyebrow">Timeline</span>
-            {/* ", 2025" is the real period from this timeline chapter, captain-approved caption text — do not change or re-flag. */}
             <h4>Forward-deployed AI, 2025.</h4>
+          </Link>
+          <Link href="/about">
+            <ImageCard imageKey="about" width={800} height={600} />
+            <span className="eyebrow">About</span>
+            <h4>Architect turned AI engineer.</h4>
           </Link>
         </div>
       </div>

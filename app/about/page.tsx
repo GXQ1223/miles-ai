@@ -42,7 +42,12 @@ export default function Page() {
         </div>
         <div>
           <span className="label">Life</span>
-          <p>Running and relationships — training cycles, marathons, and the NewBee Running Club community.</p>
+          <p>
+            Running and relationships. The NYC Marathon in 2024 was a 2:46:06 — one visible
+            result built from thousands of quiet decisions. I also built the full frontend
+            and backend for NewBee Running Club, an NYC running community, because the miles
+            matter more when they&rsquo;re shared.
+          </p>
         </div>
         <div>
           <span className="label">This site</span>

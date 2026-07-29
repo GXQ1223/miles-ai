@@ -12,12 +12,8 @@ export const metadata: Metadata = {
 };
 
 const publicLinks: [string, string][] = [
-  ["Now", "/now"],
   ["Work", "/work"],
-  ["Garden", "/garden"],
-  ["Miles", "/miles"],
   ["Timeline", "/timeline"],
-  ["Archive", "/archive/2026"],
   ["About", "/about"],
   ["Studio", "/studio"]
 ];

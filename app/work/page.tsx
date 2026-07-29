@@ -8,35 +8,18 @@ export default function WorkPage() {
     <div>
       <div className="headCentered">
         <span className="eyebrow">Workshop</span>
-        <h1>Systems built in messy reality.</h1>
+        <h1>Websites and systems I&rsquo;ve built.</h1>
         <p className="lede">
-          Each case study begins with the operating problem, follows the decisions,
-          exposes failure modes, and states clearly what I owned.
+          Live projects first — the things you can actually open. Below that, three
+          confidential case studies from client work: the operating problem, the decisions,
+          the failure modes, and what I owned.
         </p>
       </div>
 
       <div className="block-section">
-        {featuredSystems.map((item, index) => (
-          <Link
-            href={`/work/${item.slug}`}
-            className={`work-row${index % 2 ? " rev" : ""}`}
-            key={item.slug}
-          >
-            <ImageCard imageKey={workImageKeyBySlug[item.slug]} width={1200} height={900} />
-            <div className="worktxt">
-              <span className="num">CASE STUDY 0{index + 1}</span>
-              <h3>{item.title}</h3>
-              <p>{item.summary}</p>
-              <span className="link">Read the case study →</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      <div className="block-section">
         <div className="section-head">
-          <span className="eyebrow">Other projects</span>
-          <h2>Built alongside the day job.</h2>
+          <span className="eyebrow">Live projects</span>
+          <h2>Built, shipped, and online.</h2>
         </div>
         <div className="grid">
           {otherProjects.map((item) => {
@@ -58,6 +41,28 @@ export default function WorkPage() {
             );
           })}
         </div>
+      </div>
+
+      <div className="block-section">
+        <div className="section-head">
+          <span className="eyebrow">Case studies</span>
+          <h2>Confidential systems, told in writing.</h2>
+        </div>
+        {featuredSystems.map((item, index) => (
+          <Link
+            href={`/work/${item.slug}`}
+            className={`work-row${index % 2 ? " rev" : ""}`}
+            key={item.slug}
+          >
+            <ImageCard imageKey={workImageKeyBySlug[item.slug]} width={1200} height={900} />
+            <div className="worktxt">
+              <span className="num">CASE STUDY 0{index + 1}</span>
+              <h3>{item.title}</h3>
+              <p>{item.summary}</p>
+              <span className="link">Read the case study →</span>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

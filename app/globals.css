@@ -281,8 +281,8 @@ button {
 .worktxt p { font-size: 15px; color: var(--muted); line-height: 1.6; margin: 0 0 20px; }
 .worktxt .link { font-size: 14px; font-weight: 600; color: var(--accent); }
 
-/* ---------- four-up gallery grid with hover-lift ---------- */
-.gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+/* ---------- gallery grid with hover-lift ---------- */
+.gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
 .gallery a { display: block; }
 .gallery .imgcard { height: 220px; margin-bottom: 16px; transition: transform 0.25s ease, box-shadow 0.25s ease; }
 .gallery a:hover .imgcard { transform: translateY(-4px); box-shadow: 0 24px 48px -24px rgba(20, 20, 30, 0.35); }
@@ -335,7 +335,7 @@ button {
   }
   .work-row .imgcard, .work-row.rev .imgcard { order: initial; height: 260px; }
   .work-row .worktxt, .work-row.rev .worktxt { order: initial; }
-  .gallery { grid-template-columns: repeat(2, 1fr); }
+  .gallery { grid-template-columns: 1fr; }
   .now-row { grid-template-columns: 1fr; gap: 6px; }
   .three-up { grid-template-columns: 1fr; gap: 36px; }
   .cross-grid { grid-template-columns: 1fr; }

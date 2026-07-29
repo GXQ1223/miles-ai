@@ -18,12 +18,8 @@ const SEEDS = {
   workHostileIntegrations: "miles-work-2",
   workMultiTenantAi: "miles-work-3",
   workBreak: "miles-break-1",
-  garden: "miles-garden-1",
-  miles: "miles-running-1",
   timeline: "miles-timeline-1",
-  archive: "miles-archive-1",
   about: "miles-about-1",
-  now: "miles-now-1",
 } as const;
 
 export type ImageKey = keyof typeof SEEDS;
