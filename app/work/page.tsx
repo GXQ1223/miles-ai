@@ -32,12 +32,18 @@ export default function WorkPage() {
                 </div>
               </>
             );
-            return item.href ? (
+            if (!item.href) {
+              return <article className="card" key={item.title}>{content}</article>;
+            }
+            const isInternal = item.href.startsWith("/");
+            return isInternal ? (
+              <Link href={item.href} className="card" key={item.title}>
+                {content}
+              </Link>
+            ) : (
               <a href={item.href} target="_blank" rel="noreferrer" className="card" key={item.title}>
                 {content}
               </a>
-            ) : (
-              <article className="card" key={item.title}>{content}</article>
             );
           })}
         </div>

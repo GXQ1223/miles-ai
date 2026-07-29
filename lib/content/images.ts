@@ -20,6 +20,7 @@ const SEEDS = {
   workBreak: "miles-break-1",
   timeline: "miles-timeline-1",
   about: "miles-about-1",
+  architecture: "miles-architecture-1",
 } as const;
 
 export type ImageKey = keyof typeof SEEDS;

@@ -93,7 +93,7 @@ export const otherProjects = [
     role: "Computational design & visualization",
     summary:
       "Parametric tools that iterated large-scale project options, compressing exploration cycles from weeks to hours, plus the visualization tooling used in client and city-agency reviews.",
-    href: null
+    href: "/architecture"
   }
 ];
 
