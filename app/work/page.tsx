@@ -35,8 +35,7 @@ export default function WorkPage() {
             if (!item.href) {
               return <article className="card" key={item.title}>{content}</article>;
             }
-            const isInternal = item.href.startsWith("/");
-            return isInternal ? (
+            return item.href.startsWith("/") ? (
               <Link href={item.href} className="card" key={item.title}>
                 {content}
               </Link>
