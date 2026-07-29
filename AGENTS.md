@@ -38,6 +38,23 @@ binding a passkey is registered against) and `README.md`'s "Registering the
 passkey" section for the registration flow, the domain-binding gotcha, and
 what this does and does not cover per `docs/PRIVACY.md`.
 
+## Timeline (zoomable map)
+
+`/timeline` is an interactive three-level zoom (chapter -> moment -> case study),
+not flat text — `components/timeline-zoom-map.tsx` is the client component;
+`app/timeline/page.tsx` assembles its chapter data from `lib/content/sample.ts`
+(`featuredSystems`, `otherProjects`) rather than duplicating copy. Node
+positions use `--pos-x`/`--pos-y` CSS custom properties so a single `max-width:
+699px` media query in `app/globals.css` can redirect the whole axis from
+horizontal (desktop, position = real year) to vertical (mobile, even index
+spacing — some chapters have adjacent year ranges that would collide if
+stacked proportionally) without any JS viewport branching. Breadcrumb + zoom-
+out live in one sticky `.tl-controlbar` rather than per-level floating
+buttons — a floating button scrolled underneath the sticky site header and
+became unclickable. Each zoom level needs explicit CSS hiding it at every
+*deeper* level, not just the next one down, or a shallower level bleeds
+through at the bottom of the stack.
+
 ## Known pre-existing issue
 
 `npm run build` fails during its "Running TypeScript" step with `The "id"
