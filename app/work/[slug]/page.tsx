@@ -100,7 +100,7 @@ export default async function WorkDetailPage({ params }: Props) {
           <Link href="/timeline">
             <ImageCard imageKey="timeline" width={800} height={600} />
             <span className="eyebrow">Timeline</span>
-            <h4>Forward-deployed AI, 2025.</h4>
+            <h4>Forward-deployed AI engineer, 2025.</h4>
           </Link>
           <Link href="/about">
             <ImageCard imageKey="about" width={800} height={600} />

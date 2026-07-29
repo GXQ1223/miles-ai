@@ -38,22 +38,32 @@ binding a passkey is registered against) and `README.md`'s "Registering the
 passkey" section for the registration flow, the domain-binding gotcha, and
 what this does and does not cover per `docs/PRIVACY.md`.
 
-## Timeline (zoomable map)
+## Timeline (flat/axon toggle)
 
-`/timeline` is an interactive three-level zoom (chapter -> moment -> case study),
-not flat text — `components/timeline-zoom-map.tsx` is the client component;
-`app/timeline/page.tsx` assembles its chapter data from `lib/content/sample.ts`
-(`featuredSystems`, `otherProjects`) rather than duplicating copy. Node
-positions use `--pos-x`/`--pos-y` CSS custom properties so a single `max-width:
-699px` media query in `app/globals.css` can redirect the whole axis from
-horizontal (desktop, position = real year) to vertical (mobile, even index
-spacing — some chapters have adjacent year ranges that would collide if
-stacked proportionally) without any JS viewport branching. Breadcrumb + zoom-
-out live in one sticky `.tl-controlbar` rather than per-level floating
-buttons — a floating button scrolled underneath the sticky site header and
-became unclickable. Each zoom level needs explicit CSS hiding it at every
-*deeper* level, not just the next one down, or a shallower level bleeds
-through at the bottom of the stack.
+`/timeline` is a Flat View / Axon View toggle (not the earlier zoomable-map
+mechanic — see git history for `components/timeline-zoom-map.tsx` if that
+reasoning is ever needed again). `components/timeline-axon.tsx` is the client
+component; `app/timeline/page.tsx` assembles its three chapters from
+`lib/content/sample.ts` (`featuredSystems`, `otherProjects`) rather than
+duplicating copy — tags are the real project/case-study titles, read live.
+Chapter-level content only, no drill-down into individual case studies, by
+design.
+
+Each chapter's placement in both views is a formula of its `backRank`/depth
+in the chapters array (`placementFor` in `timeline-axon.tsx`), not per-index
+constants, so a 4th (older) chapter needs no layout-code changes. Position is
+set via `--flat-x`/`--flat-y`/`--flat-scale`/`--z-depth` custom properties
+consumed inside `transform: translate3d(...)`, which animates cleanly with no
+`@property` registration needed.
+
+The side panel lists chapters newest-first (top) to oldest-last (bottom),
+matching the visual stack's front-to-back order exactly — keep these in sync;
+a mismatch is what makes the straight connector lines between a card and its
+panel entry cross. Card-to-panel-entry correspondence is carried by a fixed
+numbered badge (0 = oldest) on both, independent of list position. Leader
+lines are hidden below the `900px` breakpoint, where the panel stacks under
+the stage instead of beside it and a straight line no longer makes geometric
+sense — the badges alone carry correspondence there.
 
 ## Known pre-existing issue
 
