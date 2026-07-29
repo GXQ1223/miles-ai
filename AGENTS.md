@@ -18,6 +18,13 @@ Before editing:
 8. Placeholder photography (Picsum, no real photos yet) is centralized in
    `lib/content/images.ts` — reference images via its `imageUrl(key, w, h)`, never
    inline a picsum URL in a component, so swapping in real photos later is a one-file change.
+9. The public IA is intentionally three panels: Work, Timeline, About (plus `/studio`,
+   which is private/unrelated). `/now`, `/garden`, `/archive`, and `/miles` were cut by
+   captain decision — don't recreate them or re-add their nav links without a fresh
+   decision. `/work` leads with live/clickable projects (`otherProjects` in
+   `lib/content/sample.ts`), then the confidential narrative case studies
+   (`featuredSystems`); keep that order. Running/Miles content lives as a couple of
+   sentences in the About page's "Life" card, not a dedicated section.
 
 ## Studio authentication
 
