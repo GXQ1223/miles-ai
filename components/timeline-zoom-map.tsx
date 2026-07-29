@@ -38,13 +38,6 @@ export type TimelineChapter = {
   events: TimelineEvent[];
 };
 
-const YEAR_MIN = 2021;
-const YEAR_MAX = 2026.5;
-
-function xPct(year: number) {
-  return ((year - YEAR_MIN) / (YEAR_MAX - YEAR_MIN)) * 100;
-}
-
 // Positioned along the axis via a `--pos` custom property rather than an inline `left`/`top`
 // so the CSS alone can redirect it to either axis depending on viewport width — the same
 // number drives a horizontal position on wide screens and a vertical one on narrow screens.
@@ -66,12 +59,23 @@ function nodeStyle(pctX: number, pctY: number): CSSProperties {
   return { "--pos-x": `${pctX}%`, "--pos-y": `${pctY}%` } as CSSProperties;
 }
 
-const YEARS = [2021, 2022, 2023, 2024, 2025, 2026];
-
 export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
   const [level, setLevel] = useState<0 | 1 | 2>(0);
   const [chapterId, setChapterId] = useState<string | null>(null);
   const [eventId, setEventId] = useState<string | null>(null);
+
+  // Derived from the chapters prop rather than duplicated as constants, so the axis
+  // stays in sync if a chapter's year range ever changes in app/timeline/page.tsx.
+  const yearMin = Math.min(...chapters.map((c) => c.yearStart));
+  const yearMax = Math.max(...chapters.map((c) => c.yearEnd));
+  const lastTickYear = Math.floor(yearMax);
+  const isOngoing = yearMax > lastTickYear;
+  const years: number[] = [];
+  for (let y = Math.ceil(yearMin); y <= lastTickYear; y++) years.push(y);
+
+  function xPct(year: number) {
+    return ((year - yearMin) / (yearMax - yearMin)) * 100;
+  }
 
   const chapter = chapters.find((c) => c.id === chapterId) ?? null;
   const event = chapter?.events.find((e) => e.id === eventId) ?? null;
@@ -129,9 +133,9 @@ export function TimelineZoomMap({ chapters }: { chapters: TimelineChapter[] }) {
           <div className="tl-axis-wrap">
             <div className="tl-axis-line" />
             <div className="tl-year-ticks">
-              {YEARS.map((y) => (
+              {years.map((y) => (
                 <span className="tl-year-tick" style={posStyle(xPct(y))} key={y}>
-                  {y === 2026 ? "2026 — now" : y}
+                  {y === lastTickYear && isOngoing ? `${y} — now` : y}
                 </span>
               ))}
             </div>

@@ -512,4 +512,7 @@ button {
   .tl-chapter-card .tl-connector, .tl-event-card .tl-connector { display: none; }
 
   .tl-sub-axis-line { left: 24px; right: auto; top: 0; bottom: 0; height: auto; width: 2px; }
+
+  .tl-detail-sections { grid-template-columns: 1fr; max-width: none; }
+  .tl-detail-sections .full { grid-column: auto; }
 }
