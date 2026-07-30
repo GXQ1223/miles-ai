@@ -351,7 +351,16 @@ button {
 }
 
 /* ---------- timeline: flat / axon toggle ---------- */
-.tlx-wrap { padding-bottom: 60px; }
+.tlx-wrap {
+  padding-bottom: 60px;
+  /* Soft-UI neumorphic tokens for the Axon stage only (captain-approved final design) —
+     scoped here rather than added to :root since they're a deliberately bespoke material
+     for this one 3D scene, not a change to the site's white/near-black/violet palette. */
+  --axon-bg: #f4f4f4;
+  --axon-card: #fafafa;
+  --axon-edge: rgba(13, 13, 13, 0.55);
+  --axon-guide: #c7c7c7;
+}
 
 .tlx-toggle-row {
   margin-top: 40px;
@@ -388,17 +397,16 @@ button {
 .tlx-stage-wrap {
   position: relative;
   height: 560px;
-  perspective: 2200px;
+  /* No `perspective` here or anywhere in the Axon rig's ancestor chain — the volumes
+     must read as true orthographic (parallel) projection, zero vanishing point, no size
+     falloff with depth. Flat View doesn't need it either (translate3d/scale only). */
   isolation: isolate;
 }
 
 .tlx-stage {
   position: absolute; inset: 0;
   transform-style: preserve-3d;
-  transform: rotateX(0deg) rotateZ(0deg);
-  transition: transform .85s cubic-bezier(.65,0,.35,1);
 }
-.tlx-stage[data-view="axon"] { transform: rotateX(52deg) rotateZ(-38deg); }
 
 .tlx-plane {
   position: absolute;
@@ -462,16 +470,76 @@ button {
 .tlx-stage[data-view="flat"] .tlx-plane:not(.is-current) { min-height: 168px; }
 .tlx-stage[data-view="flat"] .tlx-plane.is-back { background: var(--surface); }
 
-/* Axon view: same planes, exploded along Z within the isometric parent — translateZ
-   reads visually as "diagonally up and to the right" once the parent is rotated. Every
-   plane becomes a uniform peer card. */
-.tlx-stage[data-view="axon"] .tlx-plane {
-  min-height: 190px;
-  padding: 22px 26px;
-  background: #fff;
-  transform: translate3d(0, 0, var(--z-depth)) scale(1);
-  z-index: var(--flat-z);
-  box-shadow: 0 30px 60px -30px rgba(20,20,30,.4);
+/* ---------- axon view: same-footprint plates stacked and exploded along Z ----------
+   Each chapter is one flat plate at the SAME x/y footprint and size — only translateZ
+   differs (per components/timeline-axon.tsx's PLATE_SPACING * depth), so the "explosion"
+   reads as pure vertical stacking once the shared rig rotates it, not scattered volumes.
+   No `perspective` anywhere in this chain (see .tlx-stage-wrap) — true orthographic
+   projection, matching the captain-approved final-approved-design reference exactly
+   (same rotateX(55deg) rotateZ(-45deg) rig angles, same soft-UI neumorphic plate skin:
+   raised dual-shadow + a crisp solid edge so boundaries never dissolve into the shadow).
+   Dashed vertical corner guides connect the stack's 4 shared footprint corners top to
+   bottom. The badge/leader/text callout per plate is anchored to a real child of that
+   plate (.tlx-axon-anchor) so it's structurally glued to the plate's own transform, then
+   converted to flat 2D screen coordinates via getBoundingClientRect() for crisp,
+   unrotated text. */
+.tlx-axon-rig {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  /* translateY is outermost (applied last, in plain post-rotation screen space) so it
+     shifts the whole stack down by a constant amount regardless of scale, keeping the
+     newest (topmost) plate clear of the note/toggle row above the stage. */
+  transform: translateY(110px) scale(var(--axon-scale, 1)) rotateX(55deg) rotateZ(-45deg);
+}
+@media (max-width: 1360px) {
+  .tlx-wrap { --axon-scale: 0.84; }
+}
+.tlx-axon-backdrop {
+  position: absolute; inset: 0;
+  background: var(--axon-bg);
+  border-radius: 20px;
+}
+.tlx-axon-plate {
+  position: absolute; top: 50%; left: 50%;
+  width: 360px; height: 220px; margin: -110px 0 0 -180px;
+  background: var(--axon-card); border-radius: 14px;
+  border: 1.5px solid var(--axon-edge);
+  box-shadow: 10px 10px 22px rgba(0, 0, 0, 0.14), -8px -8px 18px rgba(255, 255, 255, 0.9);
+  transform-style: preserve-3d;
+}
+.tlx-axon-anchor { position: absolute; top: 0; left: 100%; width: 1px; height: 1px; }
+.tlx-axon-guide {
+  position: absolute; top: 50%; left: 50%; width: 1.5px;
+  margin: 0 0 0 -0.75px;
+  background: repeating-linear-gradient(180deg, var(--axon-guide) 0 4px, transparent 4px 9px);
+}
+
+.tlx-axon-annot { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.tlx-axon-annot.is-hidden { opacity: 0; }
+.tlx-axon-pin {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 28px; height: 28px; border-radius: 9px;
+  background: var(--ink); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit; font-size: 12px; font-weight: 800; z-index: 6;
+  box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.25), -3px -3px 8px rgba(255, 255, 255, 0.8);
+}
+.tlx-axon-leader { position: absolute; height: 1.5px; background: var(--axon-guide); transform-origin: 0 50%; }
+.tlx-axon-label {
+  position: absolute; transform: translate(0, -50%);
+  text-align: left; white-space: nowrap;
+}
+.tlx-axon-label-title { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.tlx-axon-label-meta { display: block; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+
+.tlx-axon-fallback-note {
+  font-size: 12px; color: var(--muted); font-style: italic; margin: 0 0 14px;
+}
+
+@media (max-width: 640px) {
+  /* A full 3D axonometric can't stay legible at phone widths — Axon View falls back to
+     the Flat stage automatically here (see isNarrow in timeline-axon.tsx). */
+  .tlx-axon-backdrop, .tlx-axon-rig, .tlx-axon-annot { display: none; }
 }
 
 /* ---------- leader lines ----------
