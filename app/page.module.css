@@ -1,0 +1,181 @@
+/* Homepage-only soft-UI neumorphic material. Scoped entirely to this CSS Module so
+   nothing here can leak into /work, /timeline, /about, /studio, or globals.css.
+   Layout numbers (max-widths, grid columns, gaps, paddings) are carried over from the
+   shared Quiet Grid rules in app/globals.css so section rhythm is unchanged — only the
+   chrome (backgrounds, card surfaces, borders, shadows, buttons, badges) is new. */
+
+.home {
+  --su-bg: #f4f4f4;
+  --su-surface: #fafafa;
+  --su-line: rgba(15, 15, 17, 0.16);
+  --su-line-soft: rgba(15, 15, 17, 0.09);
+  --su-shadow-dark: rgba(20, 20, 24, 0.14);
+  --su-shadow-light: rgba(255, 255, 255, 0.9);
+  background: var(--su-bg);
+}
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative;
+  padding: 150px 32px 90px;
+  text-align: center;
+  overflow: hidden;
+  background: transparent;
+}
+.hero :global(.eyebrow) { margin: 0 auto 22px; text-align: center; }
+.hero h1 { margin: 0 auto 26px; max-width: 920px; }
+.hero :global(.lede) { margin: 0 auto 36px; max-width: 520px; text-align: center; font-size: 19px; }
+.cta { display: flex; gap: 16px; justify-content: center; font-size: 14px; font-weight: 600; }
+.primary {
+  display: inline-block;
+  background: var(--ink);
+  color: #fff;
+  padding: 13px 26px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    8px 8px 18px var(--su-shadow-dark),
+    -6px -6px 14px var(--su-shadow-light),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.primary:hover {
+  box-shadow:
+    4px 4px 10px var(--su-shadow-dark),
+    -3px -3px 8px var(--su-shadow-light),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  transform: translateY(1px);
+}
+
+.heroImgWrap { max-width: 1200px; margin: 0 auto; padding: 0 32px 110px; }
+:global(.imgcard).heroImg {
+  width: 100%;
+  height: 56vh;
+  min-height: 320px;
+  border-radius: 16px;
+  border: 1.5px solid var(--su-line);
+  box-shadow:
+    16px 16px 34px var(--su-shadow-dark),
+    -12px -12px 26px var(--su-shadow-light);
+}
+
+/* ---------- shared section scaffolding ---------- */
+.blockSection { max-width: 1200px; margin: 0 auto; padding: 0 32px 140px; }
+.sectionHead { margin-bottom: 56px; max-width: 640px; }
+.sectionHead :global(.eyebrow) { margin-bottom: 14px; }
+.sectionHead h2 { font-size: clamp(26px, 3vw, 38px); margin: 0; }
+
+/* ---------- current chapter: pressed-in panel ---------- */
+.nowRows {
+  background: var(--su-surface);
+  border-radius: 16px;
+  border: 1.5px solid var(--su-line);
+  padding: 6px 32px;
+  box-shadow:
+    inset 7px 7px 16px rgba(0, 0, 0, 0.08),
+    inset -7px -7px 16px rgba(255, 255, 255, 0.85);
+}
+.nowRow {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--su-line-soft);
+  align-items: baseline;
+}
+.nowRow:last-child { border-bottom: none; }
+.k { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.v { font-size: 19px; font-weight: 500; letter-spacing: -0.01em; }
+
+/* ---------- selected work: raised case-study cards ---------- */
+.workRow {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 44px;
+  align-items: center;
+  padding: 36px;
+  margin-bottom: 32px;
+  background: var(--su-surface);
+  border-radius: 16px;
+  border: 1.5px solid var(--su-line);
+  box-shadow:
+    16px 16px 34px var(--su-shadow-dark),
+    -12px -12px 26px var(--su-shadow-light);
+}
+.workRow:last-child { margin-bottom: 0; }
+.workRowRev { grid-template-columns: 1fr 1.6fr; }
+.workRowRev :global(.imgcard) { order: 2; }
+.workRowRev .worktxt { order: 1; }
+.workRow :global(.imgcard) { height: 340px; }
+:global(.imgcard).workImg {
+  border-radius: 12px;
+  border: 1.5px solid var(--su-line);
+  box-shadow: none;
+}
+.numRow { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.badge {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.2),
+    -3px -3px 8px rgba(255, 255, 255, 0.85);
+}
+.num { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.1em; }
+.worktxt h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; margin: 0 0 12px; line-height: 1.25; }
+.worktxt p { font-size: 15px; color: var(--muted); line-height: 1.6; margin: 0 0 20px; }
+.link { font-size: 14px; font-weight: 600; color: var(--ink); }
+.workRow:hover .link { text-decoration: underline; }
+
+/* ---------- elsewhere on the site: raised link cards ---------- */
+.gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+.galleryCard {
+  display: block;
+  padding: 20px;
+  background: var(--su-surface);
+  border-radius: 16px;
+  border: 1.5px solid var(--su-line);
+  box-shadow:
+    12px 12px 26px var(--su-shadow-dark),
+    -9px -9px 20px var(--su-shadow-light);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.galleryCard:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    16px 16px 32px var(--su-shadow-dark),
+    -12px -12px 24px var(--su-shadow-light);
+}
+:global(.imgcard).galleryImg {
+  height: 200px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--su-line);
+  box-shadow: none;
+}
+.galleryCard :global(.eyebrow) { font-size: 11px; margin-bottom: 6px; }
+.galleryCard h4 { font-size: 16px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+
+@media (max-width: 900px) {
+  .hero { padding: 110px 20px 60px; }
+  .heroImgWrap { padding: 0 20px 60px; }
+  .blockSection { padding: 0 20px 90px; }
+  .workRow, .workRowRev {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+  .workRowRev :global(.imgcard) { order: initial; }
+  .workRowRev .worktxt { order: initial; }
+  .workRow :global(.imgcard) { height: 220px; }
+  .gallery { grid-template-columns: 1fr; }
+  .nowRow { grid-template-columns: 1fr; gap: 6px; }
+  .nowRows { padding: 4px 20px; }
+}
