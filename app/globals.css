@@ -350,169 +350,171 @@ button {
   .studioNav { position: static; }
 }
 
-/* ---------- timeline: zoomable map (chapter -> moment -> case study) ---------- */
-.tl-wrap { padding-bottom: 60px; }
+/* ---------- timeline: flat / axon toggle ---------- */
+.tlx-wrap { padding-bottom: 60px; }
 
-/* Breadcrumb + zoom-out live in one sticky bar (not per-level floating buttons) so they're
-   always reachable — a level-scoped floating button would scroll under this bar instead. */
-.tl-controlbar {
-  position: sticky; top: 68px; z-index: 40;
-  max-width: 1200px; margin: 0 auto; padding: 14px 32px;
-  background: #fff; border-bottom: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+.tlx-toggle-row {
+  margin-top: 40px;
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
 }
-.tl-crumbs { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; min-height: 20px; }
-.tl-sep { color: var(--line); }
-.tl-crumb { background: none; border: none; padding: 4px 2px; color: var(--muted); cursor: pointer; font: inherit; font-weight: 600; }
-.tl-crumb:hover { color: var(--ink); }
-.tl-crumb.current { color: var(--ink); cursor: default; }
-.tl-zoom-out {
-  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
-  padding: 9px 16px; border-radius: 100px; border: 1px solid var(--line);
-  background: #fff; font-size: 12.5px; font-weight: 600; color: var(--ink);
-  cursor: pointer; box-shadow: 0 10px 24px -18px rgba(20,20,30,0.3);
+.tlx-toggle {
+  display: inline-flex; border: 1px solid var(--line); border-radius: 100px;
+  padding: 4px; background: var(--surface); gap: 2px;
 }
-.tl-zoom-out:hover { border-color: var(--ink); }
+.tlx-toggle button {
+  appearance: none; border: none; background: transparent; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--muted);
+  padding: 9px 20px; border-radius: 100px; transition: background .25s ease, color .25s ease;
+}
+.tlx-toggle button.active { background: var(--ink); color: #fff; }
+.tlx-toggle button:not(.active):hover { color: var(--ink); }
 
-.tl-stage {
+.tlx-note {
+  font-size: 13px; color: var(--muted); font-style: italic;
+  max-width: 380px; position: relative; padding-left: 14px; margin: 0;
+}
+.tlx-note::before {
+  content: ""; position: absolute; left: 0; top: 3px; bottom: 3px; width: 2px;
+  background: var(--accent);
+}
+
+.tlx-stage-row {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
+  gap: 48px;
+  align-items: start;
+}
+.tlx-stage-wrap {
   position: relative;
-  max-width: 1200px;
-  margin: 18px auto 0;
-  padding: 0 32px;
-  height: 640px;
+  height: 560px;
+  perspective: 2200px;
+  isolation: isolate;
 }
-.tl-level {
+
+.tlx-stage {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateZ(0deg);
+  transition: transform .85s cubic-bezier(.65,0,.35,1);
+}
+.tlx-stage[data-view="axon"] { transform: rotateX(52deg) rotateZ(-38deg); }
+
+.tlx-plane {
   position: absolute;
-  inset: 0;
-  transition: transform 0.55s cubic-bezier(.22,.85,.28,1), opacity 0.4s ease;
-  will-change: transform, opacity;
+  left: 50%; top: 50%;
+  width: 460px;
+  margin-left: -230px;
+  margin-top: -95px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 48px -28px rgba(20,20,30,.28);
+  padding: 22px 26px;
+  transform-style: preserve-3d;
+  transition: transform .85s cubic-bezier(.65,0,.35,1),
+              min-height .6s ease, padding .5s ease,
+              box-shadow .6s ease, background .6s ease;
+  overflow: hidden;
 }
-.tl-stage[data-level="0"] .tl-level-0 { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
-.tl-stage[data-level="0"] .tl-level-1,
-.tl-stage[data-level="0"] .tl-level-2 { transform: scale(1.06); opacity: 0; pointer-events: none; }
-
-.tl-stage[data-level="1"] .tl-level-0 { transform: scale(0.92) translateY(-8px); opacity: 0; pointer-events: none; }
-.tl-stage[data-level="1"] .tl-level-1 { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
-.tl-stage[data-level="1"] .tl-level-2 { transform: scale(1.06); opacity: 0; pointer-events: none; }
-
-/* Deepest level must explicitly hide every shallower level, not just the one above it —
-   without this, level-0 falls back to its unstyled defaults and renders beneath level-2. */
-.tl-stage[data-level="2"] .tl-level-0,
-.tl-stage[data-level="2"] .tl-level-1 { transform: scale(0.92) translateY(-8px); opacity: 0; pointer-events: none; }
-.tl-stage[data-level="2"] .tl-level-2 { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
-
-/* ---- level 0: full timeline axis ---- */
-.tl-axis-wrap { position: relative; height: 100%; padding-top: 260px; }
-.tl-axis-line { position: absolute; left: 0; right: 0; top: 300px; height: 2px; background: var(--line); }
-.tl-axis-line::before, .tl-axis-line::after {
-  content: ""; position: absolute; top: 50%; transform: translateY(-50%);
-  width: 8px; height: 8px; border-radius: 50%; background: var(--muted);
+.tlx-plane-badge {
+  position: absolute; top: 14px; right: 16px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--line); color: var(--muted);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
 }
-.tl-axis-line::before { left: -4px; }
-.tl-axis-line::after { right: -4px; }
-.tl-year-ticks { position: absolute; left: 0; right: 0; top: 316px; }
-.tl-year-tick { position: absolute; left: var(--pos); transform: translateX(-50%); font-size: 11px; color: var(--muted); font-weight: 600; }
-
-.tl-chapters-track { position: absolute; inset: 0; }
-.tl-chapter-node { position: absolute; top: 300px; left: var(--pos-x); transform: translate(-50%, -50%); z-index: 2; }
-.tl-chapter-dot {
-  width: 14px; height: 14px; border-radius: 50%; background: var(--accent);
-  margin: 0 auto; box-shadow: 0 0 0 5px rgba(85, 70, 255, 0.12);
+.tlx-plane-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-right: 30px; }
+.tlx-plane-title { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+.tlx-plane-period { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.tlx-plane-org {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); margin-top: 4px; display: block;
 }
-.tl-chapter-card {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  width: 240px; padding: 22px; border: 1px solid var(--line); border-radius: 16px;
-  background: var(--surface); cursor: pointer; text-align: left; color: inherit;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+.tlx-plane-desc {
+  font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-top: 10px;
+  transition: opacity .35s ease, max-height .5s ease;
 }
-.tl-chapter-card.above { bottom: 34px; }
-.tl-chapter-card.below { top: 34px; }
-.tl-chapter-card .tl-connector { position: absolute; left: 50%; width: 1px; background: var(--line); }
-.tl-chapter-card.above .tl-connector { bottom: -34px; height: 34px; }
-.tl-chapter-card.below .tl-connector { top: -34px; height: 34px; }
-.tl-chapter-card:hover { transform: translateX(-50%) translateY(-4px); box-shadow: 0 24px 48px -28px rgba(20,20,30,0.32); border-color: #ddd; }
-.tl-chapter-card .tl-period { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-.tl-chapter-card h3 { margin: 0 0 8px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
-.tl-chapter-card p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.55; }
-.tl-zoom-hint { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; font-weight: 600; color: var(--accent); }
-
-/* ---- level 1: chapter zoomed, sub-timeline ---- */
-.tl-chapter-view { height: 100%; display: flex; flex-direction: column; }
-.tl-chapter-view-head { max-width: 640px; padding-bottom: 8px; }
-.tl-chapter-view-head h2 { margin: 0 0 10px; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
-.tl-chapter-view-head p { margin: 0; color: var(--muted); font-size: 15px; max-width: 560px; }
-
-.tl-sub-axis-wrap { position: relative; flex: 1; margin-top: 28px; }
-.tl-sub-axis-line { position: absolute; left: 0; right: 0; top: 190px; height: 2px; background: var(--line); }
-.tl-sub-events-track { position: absolute; inset: 0; }
-.tl-event-node { position: absolute; top: 190px; left: var(--pos-x); transform: translate(-50%, -50%); }
-.tl-event-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--ink); margin: 0 auto; }
-.tl-event-card {
-  position: absolute; top: 34px; left: 50%; transform: translateX(-50%);
-  width: 250px; padding: 20px; border: 1px solid var(--line); border-radius: 14px;
-  background: #fff; cursor: pointer; text-align: left; color: inherit;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 10px 30px -22px rgba(20,20,30,0.2);
+.tlx-plane-tags { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tlx-plane-tags span {
+  font-size: 10.5px; font-weight: 600; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line);
+  padding: 4px 9px; border-radius: 100px;
 }
-.tl-event-card .tl-connector { position: absolute; top: -34px; left: 50%; width: 1px; height: 34px; background: var(--line); }
-.tl-event-card:hover { transform: translateX(-50%) translateY(-4px); box-shadow: 0 20px 40px -24px rgba(20,20,30,0.3); }
-.tl-event-card .tl-eb { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-.tl-event-card h4 { margin: 0 0 6px; font-size: 15px; font-weight: 700; letter-spacing: -0.005em; }
-.tl-role { display: block; font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
-.tl-event-card p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 
-/* ---- level 2: event / case-study detail ---- */
-.tl-event-detail { height: 100%; overflow-y: auto; padding-right: 4px; }
-.tl-event-detail-head { max-width: 700px; }
-.tl-event-detail-head .tl-eb { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-.tl-event-detail-head h2 { margin: 0 0 10px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
-.tl-event-detail-head .tl-role { display: inline-block; margin-bottom: 14px; }
-.tl-lede-p { margin: 0; color: var(--muted); font-size: 15px; max-width: 620px; }
-.tl-stack-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
-.tl-inline-link { display: inline-block; margin-top: 18px; font-size: 14px; font-weight: 600; color: var(--accent); }
-.tl-inline-link:hover { text-decoration: underline; }
-.tl-case-study-link { margin-top: 32px; }
+/* Flat view: all layers collapsed into one composite. The most recent chapter reads as
+   a thin "current" bar pinned to the top edge; older chapters cascade down-and-left
+   beneath it as overlapping panels — the same up-right diagonal as the Axon explosion,
+   just compressed to zero, so the two views feel like one motion, not two unrelated
+   layouts. Offsets come from --flat-x/--flat-y/--flat-scale/--flat-z set inline per
+   layer in components/timeline-axon.tsx, so this works for any chapter count. */
+.tlx-stage[data-view="flat"] .tlx-plane {
+  transform: translate3d(var(--flat-x), var(--flat-y), 0) scale(var(--flat-scale));
+  z-index: var(--flat-z);
+}
+.tlx-stage[data-view="flat"] .tlx-plane.is-current {
+  min-height: 0;
+  padding: 14px 26px;
+  box-shadow: 0 10px 24px -14px rgba(20,20,30,.35);
+}
+.tlx-stage[data-view="flat"] .tlx-plane.is-current .tlx-plane-desc,
+.tlx-stage[data-view="flat"] .tlx-plane.is-current .tlx-plane-tags { display: none; }
+.tlx-stage[data-view="flat"] .tlx-plane:not(.is-current) { min-height: 168px; }
+.tlx-stage[data-view="flat"] .tlx-plane.is-back { background: var(--surface); }
 
-.tl-detail-sections { margin-top: 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 40px; max-width: 900px; }
-.tl-detail-sections .full { grid-column: 1 / -1; }
-.tl-detail-section p { margin: 0; font-size: 14.5px; line-height: 1.65; color: #33333a; }
+/* Axon view: same planes, exploded along Z within the isometric parent — translateZ
+   reads visually as "diagonally up and to the right" once the parent is rotated. Every
+   plane becomes a uniform peer card. */
+.tlx-stage[data-view="axon"] .tlx-plane {
+  min-height: 190px;
+  padding: 22px 26px;
+  background: #fff;
+  transform: translate3d(0, 0, var(--z-depth)) scale(1);
+  z-index: var(--flat-z);
+  box-shadow: 0 30px 60px -30px rgba(20,20,30,.4);
+}
 
-/* ---- orientation switch: vertical axis below ~700px, horizontal above ----
-   Node position is driven by the same --pos percentage in both cases; only which
-   axis it maps to (left vs top) and the card layout around it change. The level-to-
-   level zoom crossfade above (the .tl-stage[data-level] scale/opacity rules) is a
-   whole-panel effect and stays identical in both orientations — only the layout
-   *within* a level flips. */
-@media (max-width: 699px) {
-  .tl-stage[data-level="0"] { height: 940px; }
-  .tl-stage[data-level="1"] { height: 860px; }
+/* ---------- leader lines ----------
+   Straight lines, not curves, from each card's right edge to its panel badge. Because
+   the panel list order (newest-to-oldest, top-to-bottom) now matches the visual stack's
+   front-to-back order exactly, every line's start-height and end-height are sorted the
+   same way — a matching, order-preserving connection between two same-order sequences
+   cannot cross, unlike the old bottom-to-top panel list which reversed that order and
+   produced an X-shaped tangle. */
+.tlx-leader-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; transition: opacity .25s ease; opacity: 1; }
+.tlx-leader-svg.is-hidden { opacity: 0; }
+.tlx-leader-svg line { stroke: #d6d6dd; stroke-width: 1.5px; }
+.tlx-leader-svg circle { fill: var(--accent); }
 
-  .tl-axis-line {
-    left: 24px; right: auto; top: 0; bottom: 0; height: auto; width: 2px;
-  }
-  .tl-axis-line::before, .tl-axis-line::after { left: 50%; top: auto; transform: translateX(-50%); }
-  .tl-axis-line::before { top: -4px; }
-  .tl-axis-line::after { bottom: -4px; }
+/* ---------- side panel ---------- */
+.tlx-panel h2 {
+  font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 18px;
+}
+.tlx-panel-card {
+  display: flex; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line);
+}
+.tlx-panel-card:first-of-type { border-top: none; }
+.tlx-panel-badge {
+  flex: none; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ink); color: #fff; font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.tlx-panel-title { font-size: 14.5px; font-weight: 700; }
+.tlx-panel-meta { font-size: 11.5px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+.tlx-panel-desc { font-size: 13px; color: var(--muted); line-height: 1.55; margin-top: 8px; }
+.tlx-panel-tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tlx-panel-tags span {
+  font-size: 10.5px; font-weight: 600; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line);
+  padding: 3px 8px; border-radius: 100px;
+}
 
-  .tl-year-ticks { left: 0; right: auto; top: 0; bottom: 0; width: 46px; }
-  .tl-year-tick { left: 0; top: var(--pos); transform: translateY(-50%); width: 40px; text-align: right; }
-
-  .tl-chapters-track, .tl-sub-events-track { left: 52px; right: 20px; }
-
-  .tl-chapter-node, .tl-event-node {
-    left: 0; right: 0; top: var(--pos-y); transform: translateY(-50%);
-    display: flex; align-items: center; gap: 14px;
-  }
-  .tl-chapter-dot, .tl-event-dot { flex: 0 0 auto; margin: 0; }
-
-  .tl-chapter-card, .tl-event-card {
-    position: static; width: 100%; flex: 1; transform: none !important;
-  }
-  .tl-chapter-card:hover, .tl-event-card:hover { transform: none !important; }
-  .tl-chapter-card .tl-connector, .tl-event-card .tl-connector { display: none; }
-
-  .tl-sub-axis-line { left: 24px; right: auto; top: 0; bottom: 0; height: auto; width: 2px; }
-
-  .tl-detail-sections { grid-template-columns: 1fr; max-width: none; }
-  .tl-detail-sections .full { grid-column: auto; }
+@media (max-width: 900px) {
+  .tlx-stage-row { grid-template-columns: 1fr; }
+  .tlx-stage-wrap { height: 480px; overflow: hidden; }
+  /* The panel stacks below the stage at this width instead of beside it, so a card's
+     anchor and its panel badge are no longer on a shared axis a straight line can join
+     sensibly — drop the lines and let the numbered badges alone carry correspondence. */
+  .tlx-leader-svg { display: none; }
 }
