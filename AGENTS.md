@@ -15,9 +15,11 @@ Before editing:
    `/studio` (nested inside the same root layout) — treat shared class names as
    additive; don't repurpose `.page`/`.section`/`.card`/`.grid`/`.studioNav`/`.studioShell`
    in ways that would break Studio's structure.
-8. Placeholder photography (Picsum, no real photos yet) is centralized in
-   `lib/content/images.ts` — reference images via its `imageUrl(key, w, h)`, never
-   inline a picsum URL in a component, so swapping in real photos later is a one-file change.
+8. Photography is centralized in `lib/content/images.ts` — reference images via its
+   `imageUrl(key, w, h)`, never inline a picsum URL or a `public/images/...` path in a
+   component. Most keys still resolve to a Picsum placeholder; a key graduates to a real,
+   self-hosted photo by adding it to that file's `REAL_IMAGES` map, with the file living
+   under `public/images/<section>/`.
 9. The public IA is intentionally three panels: Work, Timeline, About (plus `/studio`,
    which is private/unrelated). `/now`, `/garden`, `/archive`, and `/miles` were cut by
    captain decision — don't recreate them or re-add their nav links without a fresh

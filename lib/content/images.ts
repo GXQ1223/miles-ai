@@ -1,15 +1,16 @@
 /**
- * Placeholder photography for the public site.
+ * Photography for the public site.
  *
- * No real photos exist yet, so every logical image key below resolves to a
- * Picsum deterministic seeded URL (`picsum.photos/seed/<seed>/<w>/<h>`) — the
- * same seed always returns the same "photo", so a subject (e.g. the safe-ai-actions
- * case study) looks consistent everywhere it recurs (nav, hero, cross-links).
+ * Most logical image keys below still have no real photo, so they resolve to
+ * a Picsum deterministic seeded URL (`picsum.photos/seed/<seed>/<w>/<h>`) —
+ * the same seed always returns the same "photo", so a subject (e.g. the
+ * safe-ai-actions case study) looks consistent everywhere it recurs (nav,
+ * hero, cross-links).
  *
- * TODO(real photography): once real photos exist, replace the seed strings
- * below with real asset URLs (or branch `picsumUrl` to return a real URL when
- * one is configured). Every call site references a logical key via `imageUrl`,
- * never a raw URL, so that swap happens in one place.
+ * A key can graduate out of placeholder status by adding an entry to
+ * REAL_IMAGES below, pointing at a self-hosted file under `public/images/`.
+ * Every call site references a logical key via `imageUrl`, never a raw URL
+ * or path, so that swap happens in one place.
  */
 
 const SEEDS = {
@@ -21,11 +22,24 @@ const SEEDS = {
   timeline: "miles-timeline-1",
   about: "miles-about-1",
   architecture: "miles-architecture-1",
+  architectureBreak: "miles-architecture-2",
 } as const;
 
 export type ImageKey = keyof typeof SEEDS;
 
+// Real, self-hosted photography for keys that have moved past placeholder
+// status — sourced from the KPF-era architecture portfolio. Renderings of
+// "Auto Industry Community Center" (exploded axonometric, interior mechanical
+// systems vs. exterior form) and "Future Airport" (section perspective of the
+// internal logistics system).
+const REAL_IMAGES: Partial<Record<ImageKey, string>> = {
+  architecture: "/images/architecture/auto-industry-community-center.jpg",
+  architectureBreak: "/images/architecture/future-airport.jpg",
+};
+
 export function imageUrl(key: ImageKey, width: number, height: number): string {
+  const real = REAL_IMAGES[key];
+  if (real) return real;
   return `https://picsum.photos/seed/${SEEDS[key]}/${width}/${height}`;
 }
 
