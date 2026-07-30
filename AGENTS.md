@@ -51,21 +51,46 @@ duplicating copy — tags are the real project/case-study titles, read live.
 Chapter-level content only, no drill-down into individual case studies, by
 design.
 
-Each chapter's placement in both views is a formula of its `backRank`/depth
-in the chapters array (`placementFor` in `timeline-axon.tsx`), not per-index
-constants, so a 4th (older) chapter needs no layout-code changes. Position is
-set via `--flat-x`/`--flat-y`/`--flat-scale`/`--z-depth` custom properties
-consumed inside `transform: translate3d(...)`, which animates cleanly with no
-`@property` registration needed.
+Flat View: each chapter's placement is a formula of its `backRank`/depth in
+the chapters array (`placementFor`), not per-index constants, so a 4th
+(older) chapter needs no layout-code changes. Position is set via
+`--flat-x`/`--flat-y`/`--flat-scale` custom properties consumed inside
+`transform: translate3d(...)`. The side panel lists chapters newest-first
+(top) to oldest-last (bottom), matching the visual stack's front-to-back
+order exactly — keep these in sync; a mismatch is what makes the straight
+connector lines between a card and its panel entry cross. Card-to-panel-entry
+correspondence is carried by a fixed numbered badge (0 = oldest) on both,
+independent of list position. Leader lines are hidden below the `900px`
+breakpoint, where the panel stacks under the stage instead of beside it and a
+straight line no longer makes geometric sense — the badges alone carry
+correspondence there.
 
-The side panel lists chapters newest-first (top) to oldest-last (bottom),
-matching the visual stack's front-to-back order exactly — keep these in sync;
-a mismatch is what makes the straight connector lines between a card and its
-panel entry cross. Card-to-panel-entry correspondence is carried by a fixed
-numbered badge (0 = oldest) on both, independent of list position. Leader
-lines are hidden below the `900px` breakpoint, where the panel stacks under
-the stage instead of beside it and a straight line no longer makes geometric
-sense — the badges alone carry correspondence there.
+Axon View: a true orthographic (parallel-projection) axonometric — no CSS
+`perspective` anywhere in the rig's ancestor chain, by design, per a captain
+decision that rejected an earlier vanishing-point version. Every chapter is a
+flat plate at the *same* x/y footprint, offset only by
+`translateZ(depth * PLATE_SPACING)` (a formula of depth, not per-index
+constants), so the "explosion" reads as pure vertical stacking
+inside one shared `rotateX(55deg) rotateZ(-45deg)` rig. Dashed vertical
+corner guides connect the stack's 4 shared footprint corners
+(`guideSpecs(count)`, generalized to any chapter count). The plates use a
+bespoke soft-UI neumorphic skin (`--axon-bg`/`--axon-card`/`--axon-edge`/
+`--axon-guide`, scoped as local custom properties on `.tlx-wrap`, not added
+to `:root` — this is a deliberately bespoke material for this one 3D scene,
+not a Quiet Grid palette change) with a crisp solid edge in addition to the
+soft shadow, since shadow alone lets plate boundaries dissolve. The numbered
+badge + short leader line + text label per plate is anchored to a real DOM
+child of that plate (`.tlx-axon-anchor`) so it's structurally glued to the
+plate's transform, then converted to flat 2D screen coordinates via
+`getBoundingClientRect()` after layout settles (never hand-guessed) — this is
+the same measure-don't-guess approach the reference design required after an
+earlier draft's pins drifted from their volumes. Below 640px, Axon falls back
+to rendering the Flat stage automatically (`isNarrow` in
+`timeline-axon.tsx`) with an on-screen note, since a full 3D axonometric
+can't stay legible at phone widths. An earlier, since-rejected iteration
+built each chapter as a distinct 3D building volume (top/front/right faces)
+scattered on a hatched ground plane with red Tschumi-style pin/path/callout
+annotation — see git history if that reasoning is ever needed again.
 
 ## Known pre-existing issue
 
