@@ -1,4 +1,4 @@
-# miles.ai — Life Archive Skeleton
+# xguo.ai — Life Archive Skeleton
 
 A private-first personal archive with a curated public publishing layer.
 

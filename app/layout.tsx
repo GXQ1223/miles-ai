@@ -7,7 +7,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Miles.ai",
+  title: "Xguo.ai",
   description: "Systems, distance, people, and becoming."
 };
 
@@ -26,13 +26,13 @@ export default function RootLayout({
       <body>
         <header className="siteHeader">
           <div className="nav-inner">
-            <Link href="/" className="brand">miles.ai</Link>
+            <Link href="/" className="brand">xguo.ai</Link>
             <NavLinks links={publicLinks} />
           </div>
         </header>
         <main>{children}</main>
         <footer className="siteFooter">
-          miles.ai — <Link href="/about">Miles Guo</Link> · private archive, published selectively.
+          xguo.ai — <Link href="/about">Miles Guo</Link> · private archive, published selectively.
         </footer>
       </body>
     </html>

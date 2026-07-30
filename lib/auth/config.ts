@@ -1,4 +1,4 @@
-export const RP_NAME = "miles.ai Studio";
+export const RP_NAME = "xguo.ai Studio";
 
 export interface AuthConfig {
   sessionSecret: string;
