@@ -14,7 +14,12 @@ Before editing:
    no full-bleed photos. `app/globals.css` and `app/layout.tsx` are shared with
    `/studio` (nested inside the same root layout) — treat shared class names as
    additive; don't repurpose `.page`/`.section`/`.card`/`.grid`/`.studioNav`/`.studioShell`
-   in ways that would break Studio's structure.
+   in ways that would break Studio's structure. Exception: `/` (`app/page.tsx`) uses a
+   bright soft-UI neumorphic material (captain-approved) instead of Quiet Grid card
+   chrome, self-contained in `app/page.module.css` — it deliberately does not reuse the
+   shared card/hero/work-row/gallery classnames from `app/globals.css`, so other pages
+   are unaffected. Any future single-page visual departure should follow the same
+   pattern: a page-scoped CSS Module, not edits to `app/globals.css`.
 8. Photography is centralized in `lib/content/images.ts` — reference images via its
    `imageUrl(key, w, h)`, never inline a picsum URL or a `public/images/...` path in a
    component. Most keys still resolve to a Picsum placeholder; a key graduates to a real,
